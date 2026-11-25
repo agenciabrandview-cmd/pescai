@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>pescAÍ — Vendas no WhatsApp com IA</title>
+<meta name="description" content="A IA da pescAÍ atende seus clientes no WhatsApp, responde preços e dúvidas e fecha vendas 24 horas por dia. Assinatura mensal de R$ 110.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+<style>
+/* VOICE: confiante e direto, como um vendedor que conhece o freguês
+   IDEA: uma pescaria — a conversa no WhatsApp é a linha, a venda é o peixe fisgado
+   PICTURE: celular com a conversa real da IA fechando um pedido, preso a uma linha de pesca
+   COLOUR and TYPE: vermelho pescAÍ, vinho e preto; Nunito 900 nos títulos, Manrope no texto
+   LAYOUT: menu, hero em faixa vermelha, passos, recursos, preço, perguntas, chamada final, rodapé */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0b0708);--bg2:light-dark(#f7f2f2,#140d0f);--ink:light-dark(#170c0e,#f6eff0);--mut:light-dark(#6a5c5f,#ab9da0);--line:light-dark(#eadfe1,#2a1f21);--card:light-dark(#ffffff,#171012);--red:#e3122d;--red2:#b40d25;--wine:#5c0b19;--pink:#ff8a99}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Manrope,system-ui,sans-serif;overflow-x:clip}
+a{color:inherit}
+h1,h2,h3{font-family:Nunito,Manrope,sans-serif;line-height:1.05;letter-spacing:-.025em;margin:0;text-wrap:balance}
+h1{font-size:clamp(36px,5.4vw,58px);font-weight:900}
+h2{font-size:clamp(30px,3.6vw,44px);font-weight:900}
+h3{font-size:20px;font-weight:800;line-height:1.2}
+p{margin:0}
+.wrap{max-width:1180px;margin:0 auto}
+.band{padding:clamp(56px,7vw,104px) max(5vw,18px)}
+.lead{font-size:18px;color:var(--mut);max-width:58ch}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 24px;border-radius:999px;font:800 16px/1 Manrope,sans-serif;text-decoration:none;border:2px solid transparent;cursor:pointer;white-space:nowrap;transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--pink);outline-offset:3px}
+.btn.red{background:var(--red);color:#fff}
+.btn.white{background:#fff;color:var(--red2)}
+.btn.ghost{border-color:currentColor;background:transparent}
+
+/* menu */
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:24px;padding:12px max(5vw,18px);max-width:none}
+.logo{display:flex;align-items:center;gap:9px;font:900 28px/1 Nunito,sans-serif;letter-spacing:-.04em;text-decoration:none}
+.logo svg{width:44px;height:33px;flex:none}
+.logo .ai{color:var(--red)}
+.top nav{display:flex;gap:22px;margin-left:auto;font-weight:700;font-size:15px}
+.top nav a{text-decoration:none;color:var(--mut)}.top nav a:hover{color:var(--ink)}
+.top .act{display:flex;gap:10px;align-items:center}
+.top .act .btn{min-height:44px;padding:0 18px;font-size:15px}
+.enter{font-weight:800;text-decoration:none;padding:10px 6px}
+
+/* hero */
+.hero{background:radial-gradient(120% 90% at 85% 10%,#ff2b45 0%,var(--red) 30%,var(--red2) 62%,var(--wine) 100%);color:#fff;position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:40px;align-items:center}
+.hero .lead{color:#ffe3e7}
+.hero h1 em{font-style:normal;color:#ffd1d8}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:12px;margin:30px 0 22px}
+.hero .ticks{display:flex;flex-wrap:wrap;gap:8px 20px;font-weight:700;font-size:15px;color:#ffe3e7;list-style:none;padding:0;margin:0}
+.hero .ticks li::before{content:"✓ ";color:#fff}
+.stage{position:relative;height:540px}
+.line{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.phone{position:absolute;right:6%;top:46px;width:300px;height:480px;border-radius:40px;background:#0f0a0b;padding:12px;box-shadow:0 40px 80px -20px rgba(30,0,6,.7),inset 0 0 0 2px #3a2a2d}
+.screen{height:100%;border-radius:30px;background:#efe7e2;overflow:hidden;display:flex;flex-direction:column;color:#170c0e}
+.chead{display:flex;align-items:center;gap:10px;padding:14px 14px 12px;background:#5c0b19;color:#fff}
+.chead .av{width:34px;height:34px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none}
+.chead .av svg{width:26px;height:20px}
+.chead b{font-size:14px;display:block;line-height:1.2}.chead span{font-size:12px;color:#ffc2cb}
+.msgs{flex:1;padding:14px 12px;display:flex;flex-direction:column;gap:8px;font-size:13.5px;line-height:1.4}
+.m{max-width:84%;padding:8px 11px;border-radius:14px;opacity:0;transform:translateY(8px);animation:in .5s forwards}
+.m.c{align-self:flex-end;background:#d9fdd3;border-bottom-right-radius:4px}
+.m.ia{align-self:flex-start;background:#fff;border-bottom-left-radius:4px}
+.m:nth-child(1){animation-delay:.2s}.m:nth-child(2){animation-delay:.9s}.m:nth-child(3){animation-delay:1.6s}.m:nth-child(4){animation-delay:2.3s}.m:nth-child(5){animation-delay:3s}
+.won{position:absolute;left:0;bottom:70px;background:#fff;color:#170c0e;border-radius:18px;padding:12px 16px;box-shadow:0 20px 40px -12px rgba(30,0,6,.6);display:flex;gap:12px;align-items:center;font-size:14px;opacity:0;animation:in .5s 3.7s forwards}
+.won i{width:36px;height:36px;border-radius:50%;background:#e5f6ec;color:#0f7a43;display:grid;place-items:center;font-style:normal;font-weight:900;flex:none}
+.won b{display:block;font-size:15px}
+@keyframes in{to{opacity:1;transform:none}}
+.sample{font-size:13px;color:#ffc2cb;margin-top:14px}
+
+/* passos */
+.head{display:grid;gap:14px;margin-bottom:44px;max-width:720px}
+.kick{font-weight:800;color:var(--red);font-size:15px}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;counter-reset:s;list-style:none;padding:0;margin:0}
+.steps li{background:var(--bg2);border-radius:26px;padding:30px 26px;position:relative}
+.steps .n{width:48px;height:48px;border-radius:16px;background:var(--red);color:#fff;display:grid;place-items:center;font:900 22px/1 Nunito,sans-serif;margin-bottom:18px}
+.steps p{color:var(--mut);margin-top:8px}
+
+/* recursos */
+.feat{background:var(--bg2)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.f{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:26px}
+.f svg{width:30px;height:30px;stroke:var(--red);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-bottom:14px}
+.f p{color:var(--mut);margin-top:6px;font-size:15.5px}
+
+/* preço */
+.price .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:48px;align-items:center}
+.plan{background:#170c0e;color:#fff;border-radius:30px;padding:36px 32px;position:relative;overflow:hidden}
+.plan::after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle,#e3122d66,transparent 70%);right:-80px;top:-90px}
+.plan .nm{font-weight:800;color:var(--pink)}
+.plan .val{font:900 clamp(52px,7vw,68px)/1 Nunito,sans-serif;letter-spacing:-.04em;margin:10px 0 4px;white-space:nowrap}
+.plan .val small{font-size:20px;font-weight:800;color:#c9b8bb;letter-spacing:0}
+.plan ul{list-style:none;padding:0;margin:24px 0 28px;display:grid;gap:10px}
+.plan li{padding-left:28px;position:relative}
+.plan li::before{content:"";position:absolute;left:0;top:5px;width:16px;height:16px;border-radius:50%;background:var(--red);box-shadow:inset 0 0 0 4px #170c0e}
+.plan .btn{width:100%}
+.pay{font-size:13px;color:#c9b8bb;margin-top:14px;text-align:center}
+.cmp{display:grid;gap:14px;margin-top:28px}
+.cmp div{display:flex;gap:14px;align-items:flex-start}
+.cmp b{flex:none;width:28px;height:28px;border-radius:50%;background:var(--bg2);color:var(--red);display:grid;place-items:center;font-size:15px}
+
+/* perguntas */
+.faq{background:var(--bg2)}
+.faq .wrap{max-width:820px}
+details{background:var(--card);border:1px solid var(--line);border-radius:18px;margin-bottom:12px}
+summary{cursor:pointer;list-style:none;padding:20px 56px 20px 24px;font-weight:800;font-size:17px;position:relative;min-height:44px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";position:absolute;right:22px;top:50%;transform:translateY(-50%);font:900 26px/1 Nunito,sans-serif;color:var(--red)}
+details[open] summary::after{content:"–"}
+details p{padding:0 24px 22px;color:var(--mut)}
+
+/* final */
+.final{background:linear-gradient(135deg,var(--red),var(--wine));color:#fff;text-align:center}
+.final .wrap{display:grid;justify-items:center;gap:18px}
+.final p{color:#ffe3e7;font-size:18px;max-width:52ch}
+footer{background:#0b0708;color:#bfaeb1;padding:36px max(5vw,18px);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:center;justify-content:space-between}
+footer .logo{color:#fff;font-size:24px}footer .logo svg{width:36px;height:27px}
+footer nav{display:flex;flex-wrap:wrap;gap:18px}footer a{text-decoration:none}footer a:hover{color:#fff}
+
+@media(max-width:960px){.top nav{display:none}.hero .wrap,.price .wrap{grid-template-columns:minmax(0,1fr)}.stage{height:520px;max-width:440px;width:100%;margin:0 auto}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.steps,.grid{grid-template-columns:minmax(0,1fr)}.enter{display:none}}
+@media(max-width:420px){.phone{width:270px;height:450px;right:0}.won{bottom:40px}.top .act .btn{padding:0 14px}.logo{font-size:24px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.m,.won{opacity:1;transform:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="peixe" viewBox="0 0 120 90"><path d="M34 45L8 22Q14 45 8 68Z" fill="#ff8a99" stroke="#ff8a99" stroke-width="6" stroke-linejoin="round"/><path d="M58 12H84A30 30 0 0 1 114 42A30 30 0 0 1 96 70L104 84L86 74Q85 74 84 74H58A30 30 0 0 1 28 44A30 30 0 0 1 58 12Z" fill="#e3122d"/><circle cx="56" cy="43" r="6" fill="#fff"/><circle cx="71" cy="43" r="6" fill="#fff"/><circle cx="86" cy="43" r="6" fill="#fff"/></symbol></svg>
+
+<header class="top"><div class="wrap">
+ <a class="logo" href="#inicio" aria-label="pescAÍ, início"><svg><use href="#peixe"/></svg><span>pesc<span class="ai">AÍ</span></span></a>
+ <nav aria-label="Seções"><a href="#como-funciona">Como funciona</a><a href="#recursos">Recursos</a><a href="#preco">Preço</a><a href="#duvidas">Dúvidas</a></nav>
+ <div class="act"><a class="enter" href="app/">Entrar</a><a class="btn red" href="#preco">Assinar</a></div>
+</div></header>
+
+<main id="inicio">
+<section class="band hero"><div class="wrap">
+ <div>
+  <h1>Sua IA de vendas no WhatsApp, <em>pescando clientes</em> 24 horas por dia.</h1>
+  <p class="lead" style="margin-top:20px">A pescAÍ aprende seus produtos, preços e condições e responde cada cliente na hora, tira dúvidas e conduz a conversa até a venda. Quando precisar de você, ela passa o atendimento para um humano.</p>
+  <div class="ctas"><a class="btn white" href="#preco">Assinar por R$ 110/mês</a><a class="btn ghost" href="#como-funciona">Ver como funciona</a></div>
+  <ul class="ticks"><li>Treinada com os dados da sua empresa</li><li>Responde em segundos</li><li>Assinatura mensal</li></ul>
+ </div>
+ <div class="stage" aria-label="Exemplo de conversa da IA da pescAÍ no WhatsApp">
+  <svg class="line" viewBox="0 0 440 540" preserveAspectRatio="none" aria-hidden="true"><path d="M20 0 C 60 60, 40 120, 120 150 S 210 120, 250 60" fill="none" stroke="#ffd1d8" stroke-width="2" stroke-dasharray="6 7" opacity=".7"/><circle cx="250" cy="60" r="7" fill="#fff"/></svg>
+  <div class="phone"><div class="screen">
+   <div class="chead"><span class="av"><svg><use href="#peixe"/></svg></span><div><b>Doces da Vila</b><span>atendimento com IA · online</span></div></div>
+   <div class="msgs">
+    <div class="m c">Oi! Quanto custa o bolo de chocolate?</div>
+    <div class="m ia">Oi! O bolo de chocolate de 1 kg sai por R$ 89,90 e serve 10 pessoas. Quer encomendar para qual dia?</div>
+    <div class="m c">Sábado de manhã</div>
+    <div class="m ia">Perfeito, separei para sábado! Prefere Pix ou cartão em até 3x?</div>
+    <div class="m c">Pix 👍</div>
+   </div>
+  </div></div>
+  <div class="won"><i>✓</i><div><b>Venda fechada pela IA</b>Bolo de chocolate · R$ 89,90</div></div>
+ </div>
+ <p class="sample">Conversa de exemplo, com uma empresa fictícia.</p>
+</div></section>
+
+<section class="band" id="como-funciona"><div class="wrap">
+ <div class="head"><span class="kick">Como funciona</span><h2>Do cadastro à primeira venda, em três passos.</h2></div>
+ <ol class="steps">
+  <li><span class="n">1</span><h3>Crie sua conta</h3><p>Assine o plano e preencha o perfil da empresa: endereço, telefone e horários de atendimento.</p></li>
+  <li><span class="n">2</span><h3>Treine a sua IA</h3><p>Envie catálogo, tabela de preços, perguntas frequentes e as regras de pagamento e entrega. A IA aprende tudo isso.</p></li>
+  <li><span class="n">3</span><h3>Conecte o WhatsApp</h3><p>Ligue o número da empresa e pronto: a IA começa a atender, e você acompanha cada conversa pelo painel.</p></li>
+ </ol>
+</div></section>
+
+<section class="band feat" id="recursos"><div class="wrap">
+ <div class="head"><span class="kick">Recursos</span><h2>Tudo o que um bom vendedor faz, sem folga e sem fila.</h2></div>
+ <div class="grid">
+  <div class="f"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg><h3>Atendimento imediato</h3><p>Responde cada mensagem em segundos, inclusive à noite e nos fins de semana.</p></div>
+  <div class="f"><svg viewBox="0 0 24 24"><path d="M4 19V5a2 2 0 0 1 2-2h12v18H6a2 2 0 0 1-2-2zM8 7h6M8 11h6"/></svg><h3>Aprende o seu negócio</h3><p>Usa os produtos, preços, horários e condições que você cadastrou, e não respostas genéricas.</p></div>
+  <div class="f"><svg viewBox="0 0 24 24"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg><h3>Conduz até a venda</h3><p>Sugere produtos, tira objeções, pergunta a forma de pagamento e fecha o pedido.</p></div>
+  <div class="f"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-4-6"/></svg><h3>Passa para um humano</h3><p>Pedidos especiais ou clientes que preferem falar com alguém vão direto para sua equipe.</p></div>
+  <div class="f"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><h3>Painel de resultados</h3><p>Veja conversas, vendas fechadas e o funil de atendimento, tudo num só lugar.</p></div>
+  <div class="f"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><h3>Ambiente exclusivo</h3><p>Cada empresa tem a sua própria IA, treinada só com os dados dela.</p></div>
+ </div>
+</div></section>
+
+<section class="band price" id="preco"><div class="wrap">
+ <div>
+  <div class="head" style="margin-bottom:0"><span class="kick">Preço</span><h2>Um plano só, com tudo incluso.</h2><p class="lead">Menos que um dia de trabalho de um atendente por mês, para ter alguém respondendo seus clientes o tempo todo.</p></div>
+  <div class="cmp">
+   <div><b>✓</b><p><strong>Sem taxa por venda.</strong> O valor é fixo, não importa quanto você vender.</p></div>
+   <div><b>✓</b><p><strong>Acesso pelo navegador.</strong> Use no computador ou no celular, sem instalar nada.</p></div>
+   <div><b>✓</b><p><strong>Treinamento ilimitado.</strong> Atualize produtos e preços sempre que quiser.</p></div>
+  </div>
+ </div>
+ <div class="plan">
+  <div class="nm">Plano Profissional</div>
+  <div class="val">R$ 110<small>/mês</small></div>
+  <p style="color:#c9b8bb">Cobrança mensal recorrente.</p>
+  <ul>
+   <li>IA de vendas no WhatsApp da sua empresa</li>
+   <li>Treinamento com catálogo, preços e dúvidas</li>
+   <li>Transferência para atendimento humano</li>
+   <li>Painel com conversas e vendas</li>
+  </ul>
+  <!-- TROQUE o href abaixo pelo link do checkout de assinatura (Asaas, Mercado Pago ou Stripe) -->
+  <a class="btn red" id="assinar" href="#assinar">Assinar agora</a>
+  <p class="pay">Pix, cartão ou boleto.</p>
+ </div>
+</div></section>
+
+<section class="band faq" id="duvidas"><div class="wrap">
+ <div class="head"><span class="kick">Dúvidas</span><h2>Perguntas frequentes</h2></div>
+ <details><summary>Preciso baixar algum aplicativo?</summary><p>Não. A pescAÍ funciona pelo navegador, no computador ou no celular. É só entrar com seu e-mail e senha.</p></details>
+ <details><summary>Funciona com o WhatsApp que eu já uso?</summary><p>Sim. Você conecta o número da sua empresa no painel, e a IA passa a responder as mensagens que chegam nele.</p></details>
+ <details><summary>E se a IA não souber responder?</summary><p>Ela transfere a conversa para você ou sua equipe, que continua o atendimento normalmente.</p></details>
+ <details><summary>O que eu preciso enviar para treinar a IA?</summary><p>Catálogo ou lista de produtos com preços, perguntas que seus clientes fazem com frequência e as condições de pagamento e entrega. Quanto mais completo, melhor ela vende.</p></details>
+ <details><summary>Como funciona o pagamento?</summary><p>É uma assinatura mensal de R$ 110, cobrada automaticamente todo mês.</p></details>
+</div></section>
+
+<section class="band final"><div class="wrap">
+ <h2>Jogue a linha. A pescAÍ fisga a venda.</h2>
+ <p>Coloque uma IA para atender seus clientes no WhatsApp ainda hoje.</p>
+ <a class="btn white" href="#preco">Assinar por R$ 110/mês</a>
+</div></section>
+</main>
+
+<footer><div class="wrap">
+ <a class="logo" href="#inicio"><svg><use href="#peixe"/></svg><span>pesc<span class="ai">AÍ</span></span></a>
+ <nav aria-label="Rodapé"><a href="#como-funciona">Como funciona</a><a href="#preco">Preço</a><a href="#duvidas">Dúvidas</a><a href="app/">Entrar</a></nav>
+ <span>© 2026 pescAÍ</span>
+</div></footer>
+</body>
+</html>
