@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pescaí — Atendimento com IA</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%201024%201024%22%20width%3D%221024%22%20height%3D%221024%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%22%20stop-color%3D%22%23f0213b%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%235c0b19%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%221024%22%20height%3D%221024%22%20rx%3D%22230%22%20fill%3D%22url%28%23g%29%22/%3E%3Cg%20transform%3D%22translate%28152%20242%29%20scale%286%29%22%3E%3Cpath%20d%3D%22M34%2045L8%2022Q14%2045%208%2068Z%22%20fill%3D%22%23ffd6dc%22%20stroke%3D%22%23ffd6dc%22%20stroke-width%3D%226%22%20stroke-linejoin%3D%22round%22/%3E%3Cpath%20d%3D%22M58%2012H84A30%2030%200%200%201%20114%2042A30%2030%200%200%201%2096%2070L104%2084L86%2074Q85%2074%2084%2074H58A30%2030%200%200%201%2028%2044A30%2030%200%200%201%2058%2012Z%22%20fill%3D%22%23ffffff%22/%3E%3Ccircle%20cx%3D%2256%22%20cy%3D%2243%22%20r%3D%226%22%20fill%3D%22%23b40d25%22/%3E%3Ccircle%20cx%3D%2271%22%20cy%3D%2243%22%20r%3D%226%22%20fill%3D%22%23b40d25%22/%3E%3Ccircle%20cx%3D%2286%22%20cy%3D%2243%22%20r%3D%226%22%20fill%3D%22%23b40d25%22/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+/* VOICE: SaaS premium, confiante, direto, sem enfeite
+   BRAND: Pescaí (símbolo peixe-balão, Nunito 900)
+   IDEA: a mesa de controle de vendas: o WhatsApp da empresa virando funil
+   PICTURE: conversa de WhatsApp sendo fechada sobre campo vinho (login); gráfico de desempenho (painel)
+   COLOUR and TYPE: vermelho #e3122d, vinho #5c0b19, preto #0e0809, branco; Manrope
+   LAYOUT: barra lateral preta fixa + conteúdo em grade; abaixo de 860px vira barra superior */
+:root{color-scheme:light dark;--bg:light-dark(#f6f3f3,#0b0708);--card:light-dark(#fff,#151011);--ink:light-dark(#170c0e,#f6eff0);--mut:light-dark(#6e6164,#a99b9e);--line:light-dark(#ece4e5,#2a1f21);--soft:light-dark(#fdebee,#2b1016);--red:#e3122d;--red2:#b40d25;--wine:#5c0b19;--line2:light-dark(#170c0e,#ffffff);--ok:light-dark(#0f7a43,#4fd18b);--okbg:light-dark(#e5f6ec,#10261a);--warn:light-dark(#9a5b00,#f3b54a);--warnbg:light-dark(#fff3dc,#2a1f0b)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Manrope,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{margin:0;line-height:1.1;text-wrap:balance;font-family:Nunito,Manrope,sans-serif;letter-spacing:-.02em}h1{font-size:clamp(26px,3vw,34px);font-weight:800}h2{font-size:19px;font-weight:700}h3{font-size:16px;font-weight:700}
+p{margin:0}a{color:var(--red)}
+.hide{display:none!important}
+.mut{color:var(--mut)}.sm{font-size:13px}
+button,input,select,textarea{font:inherit;color:inherit}
+.btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 18px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-weight:700;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--red)}
+.btn.pri{background:linear-gradient(135deg,#f0213b,var(--red2));border-color:transparent;color:#fff;box-shadow:0 6px 18px -8px #e3122d}
+.btn.pri:hover{filter:brightness(1.08)}
+.btn.sm{min-height:36px;padding:0 12px;font-size:14px;border-radius:10px}
+.btn.x{border:0;background:none;color:var(--mut);padding:0 8px}.btn.x:hover{color:var(--red)}
+:focus-visible{outline:3px solid #e3122d88;outline-offset:2px}
+label{display:block;font-size:14px;font-weight:600;margin-bottom:6px}
+.in{width:100%;min-height:46px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:light-dark(#fff,#0f0b0c);font-size:16px}
+.in:focus{border-color:var(--red);outline:none;box-shadow:0 0 0 3px #e3122d26}
+textarea.in{min-height:96px;resize:vertical}
+.f{margin-bottom:14px}.row{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:99px;font-size:13px;font-weight:700;white-space:nowrap;background:var(--soft);color:var(--red)}
+.badge.ok{background:var(--okbg);color:var(--ok)}.badge.warn{background:var(--warnbg);color:var(--warn)}.badge.n{background:light-dark(#f1eded,#221a1c);color:var(--mut)}
+.note{padding:12px 14px;border-radius:12px;background:var(--soft);font-size:14px}
+/* ---------- AUTH ---------- */
+#auth{min-height:100vh;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr)}
+.brandside{position:relative;overflow:hidden;color:#fff;background:radial-gradient(120% 80% at 10% 0%,#a10e24 0%,#5c0b19 45%,#140608 100%);padding:clamp(28px,4vw,56px);display:flex;flex-direction:column;gap:28px}
+.brandside .logo{font-size:40px}.brandside .logo svg{width:62px;height:47px}
+.brandside h1{font-weight:900;font-size:clamp(32px,3.6vw,50px);line-height:1.05;max-width:13ch}
+.brandside p{color:#f1d6da;max-width:44ch;font-size:17px}
+.chatdemo{margin-top:auto;max-width:420px;background:#0e0809cc;border:1px solid #ffffff1f;border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:10px;box-shadow:0 30px 60px -30px #000}
+.chatdemo .hd{display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:1px solid #ffffff14;font-size:14px}
+.av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:14px;flex:none;background:linear-gradient(135deg,#f0213b,#5c0b19);color:#fff;overflow:hidden}
+.av img{width:100%;height:100%;object-fit:cover}
+.b{max-width:82%;padding:9px 13px;border-radius:16px;font-size:14.5px;line-height:1.45}
+.b.c{align-self:flex-start;background:#ffffff14;border-bottom-left-radius:4px}
+.b.ia{align-self:flex-end;background:linear-gradient(135deg,#f0213b,#b40d25);border-bottom-right-radius:4px}
+.chatdemo .b,.chatdemo .won{opacity:0;animation:pop .5s forwards}
+.chatdemo>*:nth-child(2){animation-delay:.3s}.chatdemo>*:nth-child(3){animation-delay:1.2s}.chatdemo>*:nth-child(4){animation-delay:2.2s}.chatdemo>*:nth-child(5){animation-delay:3s}.chatdemo>*:nth-child(6){animation-delay:3.8s}
+@keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.chatdemo .b,.chatdemo .won{animation:none;opacity:1}}
+.won{align-self:center;font-size:13px;font-weight:700;padding:6px 12px;border-radius:99px;background:#ffffff;color:#5c0b19}
+.authform{display:flex;align-items:center;justify-content:center;padding:clamp(24px,5vw,64px) 20px;background:var(--card)}
+.authform form{width:100%;max-width:420px}
+.authform h2{font-size:30px;font-weight:900;margin-bottom:6px}
+.authform .lead{color:var(--mut);margin-bottom:24px}
+.authform .btn.pri{width:100%;margin-top:6px}
+.alt{margin-top:18px;text-align:center;font-size:15px;color:var(--mut)}
+.alt a,.lk{color:var(--red);font-weight:700;cursor:pointer;text-decoration:none;background:none;border:0;padding:0}
+.logo{display:flex;align-items:center;gap:10px;font:900 30px/1 Nunito,Manrope,sans-serif;letter-spacing:-.04em}
+.logo svg{width:46px;height:35px;flex:none}
+.logo .ai{color:#ff4d63}
+@media(max-width:860px){#auth{grid-template-columns:1fr}.chatdemo{margin-top:8px}}
+/* ---------- APP ---------- */
+#app{display:grid;grid-template-columns:248px minmax(0,1fr);min-height:100vh}
+.side{background:linear-gradient(180deg,#120a0b,#0b0607 60%,#2a0710);color:#fff;padding:22px 14px;display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+.side .logo{padding:4px 10px 22px}
+.nav{display:flex;flex-direction:column;gap:4px}
+.nav a{display:flex;align-items:center;gap:12px;min-height:46px;padding:0 14px;border-radius:12px;color:#d9c6c9;text-decoration:none;font-weight:600;font-size:15px;white-space:nowrap}
+.nav a svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
+.nav a:hover{background:#ffffff0d;color:#fff}
+.nav a.on{background:linear-gradient(135deg,#e3122d,#8d0b1f);color:#fff;box-shadow:0 10px 24px -12px #e3122d}
+.plan{margin-top:auto;padding:16px;border-radius:16px;background:#ffffff0a;border:1px solid #ffffff14;font-size:14px;color:#d9c6c9}
+.plan b{color:#fff;display:block;font-size:15px;margin-bottom:2px}
+.main{padding:22px clamp(16px,3vw,36px) 48px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.who{display:flex;align-items:center;gap:10px}
+.who .t{line-height:1.2}.who .t b{display:block;font-size:15px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:16px}
+.kpi .l{font-size:14px;color:var(--mut);font-weight:600}
+.kpi .v{font-family:Nunito,Manrope,sans-serif;font-weight:900;font-size:clamp(26px,2.6vw,32px);font-weight:800;line-height:1.15;margin:6px 0 4px;white-space:nowrap}
+.kpi .d{font-size:13px;font-weight:700;color:var(--ok)}
+.kpi.hero{background:linear-gradient(135deg,#d0102a,#5c0b19);color:#fff;border-color:transparent}
+.kpi.hero .l,.kpi.hero .d{color:#ffd9de}
+.g2{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:16px;margin-bottom:16px}
+.g2>.card:first-child{display:flex;flex-direction:column}.g2 .fig{flex:1}
+.g2b{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:16px}
+.ch{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+.legend{display:flex;gap:14px;font-size:13px;color:var(--mut);font-weight:600}
+.legend i{display:inline-block;width:12px;height:3px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.fig{position:relative;min-height:290px}.fig>svg{position:absolute;inset:0;width:100%;height:100%}
+.fig .gl{stroke:var(--line)}.fig .tk{fill:var(--mut);font-size:12px}
+.bars{display:flex;flex-direction:column;gap:12px}
+.bar .bl{display:flex;justify-content:space-between;font-size:14px;margin-bottom:5px;gap:8px}
+.bar .bl b{white-space:nowrap}
+.bar .tr{height:10px;border-radius:99px;background:light-dark(#f2eaeb,#241a1c);overflow:hidden}
+.bar .tr span{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#e3122d,#7d0c1f)}
+.act{list-style:none;margin:0;padding:0}
+.act li{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--line)}.act li:first-child{border:0}
+.dot{width:10px;height:10px;border-radius:50%;margin-top:7px;flex:none;background:var(--red)}
+.dot.ok{background:var(--ok)}.dot.warn{background:var(--warn)}.dot.n{background:var(--mut)}
+.act .h{margin-left:auto;font-size:13px;color:var(--mut);white-space:nowrap}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:14px}
+.step{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1px solid var(--line);border-radius:14px;text-decoration:none;color:inherit}
+.step .ck{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);flex:none;display:grid;place-items:center;font-size:14px;font-weight:800}
+.step.done .ck{background:var(--ok);border-color:var(--ok);color:#fff}
+/* conversas */
+.conv{display:grid;grid-template-columns:330px minmax(0,1fr);gap:0;padding:0;overflow:hidden;min-height:560px}
+.clist{border-right:1px solid var(--line);display:flex;flex-direction:column}
+.clist .tools{padding:14px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{min-height:34px;padding:0 12px;border-radius:99px;border:1px solid var(--line);background:none;font-size:13px;font-weight:700;cursor:pointer}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.citem{display:flex;gap:10px;padding:14px;border:0;border-bottom:1px solid var(--line);background:none;text-align:left;cursor:pointer;width:100%}
+.citem:hover{background:var(--soft)}.citem.on{background:var(--soft);box-shadow:inset 3px 0 0 var(--red)}
+.citem .t{flex:1}.citem .t b{display:block;font-size:15px}.citem .t span{font-size:13px;color:var(--mut);display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.thread{display:flex;flex-direction:column}[data-act=convback]{display:none!important}
+.thd{display:flex;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.msgs{flex:1;padding:18px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;max-height:520px;background:light-dark(#faf7f7,#100b0c)}
+.msgs .b.c{background:var(--card);border:1px solid var(--line)}
+.msgs .b.ia{color:#fff}
+.msgs .b.h{align-self:flex-end;background:var(--ink);color:var(--bg);border-bottom-right-radius:4px}
+.msgs .b small{display:block;font-size:11.5px;opacity:.7;margin-top:2px}
+.send{display:flex;gap:10px;padding:12px;border-top:1px solid var(--line)}
+.empty{padding:48px 24px;text-align:center;color:var(--mut)}
+.empty h3{color:var(--ink);margin-bottom:6px}
+/* treinamento */
+.meter{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.meter .tr{flex:1;min-width:180px;height:12px;border-radius:99px;background:light-dark(#f2eaeb,#241a1c);overflow:hidden}
+.meter .tr span{display:block;height:100%;background:linear-gradient(90deg,#e3122d,#5c0b19);border-radius:99px;transition:width .6s}
+.meter b{font-size:28px;font-weight:800;white-space:nowrap}
+.tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--line);margin:20px 0}
+.tab{flex:none;min-height:46px;padding:0 16px;border:0;background:none;font-weight:700;color:var(--mut);cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap}
+.tab.on{color:var(--ink);border-color:var(--red)}
+.drop{display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;padding:36px 20px;border:2px dashed light-dark(#e6b9c0,#5a2630);border-radius:18px;background:var(--soft);cursor:pointer}
+.drop.over{border-color:var(--red)}
+.drop svg{width:44px;height:44px;fill:none;stroke:var(--red);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.types{display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{text-align:left;font-size:13px;color:var(--mut);font-weight:700;padding:10px 12px;border-bottom:1px solid var(--line)}
+td{padding:12px;border-bottom:1px solid var(--line);vertical-align:top}
+td.n{text-align:right;white-space:nowrap;font-weight:700}
+.faq{border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;gap:10px}
+.faq div{flex:1}
+/* testar */
+.tst{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px}
+.phone{padding:0;overflow:hidden;display:flex;flex-direction:column;min-height:600px}
+.phone .thd{background:linear-gradient(135deg,#1a0b0e,#5c0b19);color:#fff;border:0}
+.phone .msgs{max-height:470px;min-height:420px}
+.typing span{display:inline-block;width:7px;height:7px;border-radius:50%;background:currentColor;margin:0 2px;animation:bl 1s infinite}
+.typing span:nth-child(2){animation-delay:.15s}.typing span:nth-child(3){animation-delay:.3s}
+@keyframes bl{50%{opacity:.25}}
+.know{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.know div{padding:12px;border-radius:12px;background:light-dark(#f7f2f3,#1c1416)}
+.know b{display:block;font-size:22px;font-weight:800}
+/* perfil */
+.pf{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.logoup{display:flex;align-items:center;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+.logoup .av{width:84px;height:84px;font-size:28px;border-radius:20px}
+.hrs{display:grid;grid-template-columns:110px 70px minmax(0,1fr) minmax(0,1fr);gap:8px 10px;align-items:center}
+.hrs .in{min-height:40px;padding:6px 10px}
+.sw{position:relative;width:46px;height:26px;display:inline-block}
+.sw input{opacity:0;width:0;height:0}
+.sw span{position:absolute;inset:0;border-radius:99px;background:light-dark(#ddd3d4,#3a2e30);cursor:pointer;transition:.2s}
+.sw span::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+.sw input:checked+span{background:var(--red)}.sw input:checked+span::after{transform:translateX(20px)}
+.sw input:focus-visible+span{outline:3px solid #e3122d88}
+#toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:#170c0e;color:#fff;padding:12px 18px;border-radius:12px;font-weight:600;font-size:15px;opacity:0;transition:.3s;pointer-events:none;z-index:9;box-shadow:0 12px 30px -12px #000;max-width:calc(100vw - 32px)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#toast.err{background:var(--red2)}
+@media(max-width:1100px){.g2,.g2b,.tst,.pf{grid-template-columns:1fr}}
+@media(max-width:860px){
+ #app{grid-template-columns:1fr}
+ .side{position:sticky;height:auto;flex-direction:row;align-items:center;padding:10px 12px;gap:10px;z-index:5}
+ .side .logo{padding:0;font-size:0;gap:0}.side .logo svg{width:40px;height:30px}
+ .nav{flex-direction:row;overflow-x:auto;flex:1}.nav a{flex:none;min-height:42px;padding:0 12px;font-size:14px}
+ .plan{display:none}
+ [data-act=convback]{display:inline-flex!important}
+ .conv{grid-template-columns:1fr}.clist{border-right:0}.conv.open .clist{display:none}.conv:not(.open) .thread{display:none}
+}
+@media(max-width:600px){table{font-size:14px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px;border-bottom:1px solid var(--line)}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:7em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:6.5em;margin-inline-start:-7em;color:var(--mut);font-size:13px}.stack td:empty{display:none}.hrs{grid-template-columns:1fr 56px;}.hrs .in{grid-column:span 1}.know{grid-template-columns:1fr}}
+</style>
+<script>new MutationObserver(()=>{for(const c of document.querySelectorAll('.stack td:not([data-l])')){let i=0,p=c;while(p=p.previousElementSibling)i+=p.colSpan;c.dataset.l=c.closest('table').rows[0].cells[i]?.textContent||''}}).observe(document,{childList:true,subtree:true})</script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <defs><linearGradient id="lgC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff2b45"/><stop offset="1" stop-color="#8a0c20"/></linearGradient></defs>
+ <symbol id="logoC" viewBox="0 0 120 90"><path d="M34 45L8 22Q14 45 8 68Z" fill="#ff8a99" stroke="#ff8a99" stroke-width="6" stroke-linejoin="round"/><path d="M58 12H84A30 30 0 0 1 114 42A30 30 0 0 1 96 70L104 84L86 74Q85 74 84 74H58A30 30 0 0 1 28 44A30 30 0 0 1 58 12Z" fill="#e3122d"/><circle cx="56" cy="43" r="6" fill="#ffffff"/><circle cx="71" cy="43" r="6" fill="#ffffff"/><circle cx="86" cy="43" r="6" fill="#ffffff"/></symbol>
+</svg>
+
+<!-- ============ AUTENTICAÇÃO ============ -->
+<div id="auth" class="hide">
+ <section class="brandside">
+  <div class="logo"><svg viewBox="0 0 120 90"><use href="#logoC"/></svg><span>pesc<span class="ai">AÍ</span></span></div>
+  <h1>Seu WhatsApp vendendo sozinho, 24 horas por dia.</h1>
+  <p>A IA do Pescaí aprende tudo sobre o seu negócio — produtos, preços, horários e condições — e atende cada cliente até fechar a venda.</p>
+  <div class="chatdemo" aria-label="Exemplo de atendimento">
+   <div class="hd"><div class="av">DS</div><div><b>Doce Sabor Confeitaria</b><div style="font-size:12px;color:#c9b3b7">IA atendendo agora</div></div></div>
+   <div class="b c">Oi! Quanto custa o bolo de chocolate?</div>
+   <div class="b ia">Oi! O bolo de chocolate de 1 kg sai por R$ 89,90 e serve 10 pessoas. Quer encomendar para qual dia?</div>
+   <div class="b c">Para sábado, pode ser?</div>
+   <div class="b ia">Pode sim! Já reservei. Prefere pagar no Pix ou no cartão em até 3x?</div>
+   <div class="won">Venda fechada pela IA · R$ 89,90</div>
+  </div>
+ </section>
+ <section class="authform" id="authForm"></section>
+</div>
+
+<!-- ============ PLATAFORMA ============ -->
+<div id="app" class="hide">
+ <aside class="side">
+  <div class="logo"><svg viewBox="0 0 120 90"><use href="#logoC"/></svg><span>pesc<span class="ai">AÍ</span></span></div>
+  <nav class="nav" id="nav"></nav>
+  <div class="plan"><b>Plano Profissional</b>Assinatura mensal ativa<br><span style="color:#ff8a99">Ambiente exclusivo da sua empresa</span></div>
+ </aside>
+ <main class="main">
+  <div class="top">
+   <div><h1 id="pgT"></h1><p class="mut" id="pgS"></p></div>
+   <div class="who"><div class="av" id="whoAv"></div><div class="t"><b id="whoN"></b><span class="mut sm" id="whoE"></span></div><button class="btn sm" data-act="logout">Sair</button></div>
+  </div>
+  <div id="view"></div>
+ </main>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+{
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const brl=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const num=v=>Number(v).toLocaleString('pt-BR');
+const norm=s=>String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+const hash=s=>{let h=5381;for(const c of s)h=(h*33^c.charCodeAt(0))>>>0;return 'h'+h.toString(36)};
+const KEY='pescai_v1';
+const DIAS=['Segunda','Terça','Quarta','Quinta','Sexta','Sábado','Domingo'];
+const SEG=['Alimentação','Moda e vestuário','Beleza e estética','Saúde','Imobiliária','Automotivo','Educação','Serviços','Varejo','Turismo','Outro'];
+
+function horasPadrao(){return DIAS.map((d,i)=>({d,on:i<6,a:'09:00',f:i===5?'14:00':'18:00'}))}
+function novaEmpresa(nome,seg,tel){return{profile:{nome,segmento:seg,tel,email:'',end:'',logo:'',horas:horasPadrao()},kb:{files:[],products:[],faq:[],notes:[],pag:'',ent:'',ai:{nome:'Assistente',tom:'Simpático e próximo',boas:'Olá! Seja bem-vindo(a) à '+nome+'. Como posso ajudar?',transfer:true}},stats:null,convs:[]}}
+function seed(){
+ const c=novaEmpresa('Doce Sabor Confeitaria','Alimentação','(41) 99876-5432');
+ Object.assign(c.profile,{email:'contato@docesabor.com.br',end:'Rua das Flores, 820 — Centro, Curitiba/PR'});
+ c.profile.horas=DIAS.map((d,i)=>({d,on:i<6,a:i===5?'08:00':'09:00',f:i===5?'15:00':'19:00'}));
+ c.kb.products=[
+  {n:'Bolo de chocolate (1 kg)',c:'Bolos',p:89.9,d:'Massa de cacau 50% com recheio de brigadeiro cremoso. Serve 10 pessoas.'},
+  {n:'Bolo red velvet (1,5 kg)',c:'Bolos',p:139.9,d:'Massa red velvet com cobertura de cream cheese. Serve 15 pessoas.'},
+  {n:'Torta de limão',c:'Tortas',p:74.9,d:'Base crocante, creme de limão siciliano e merengue maçaricado. Serve 8 pessoas.'},
+  {n:'Caixa com 25 brigadeiros gourmet',c:'Doces',p:62,d:'Sabores tradicional, ninho, pistache e café.'},
+  {n:'Cento de salgados fritos',c:'Salgados',p:95,d:'Coxinha, risoles, bolinha de queijo e kibe. Ideal para 10 a 12 pessoas.'},
+  {n:'Kit festa (bolo + 50 doces + 100 salgados)',c:'Kits',p:289,d:'Bolo de 2 kg, 50 doces e 100 salgados. Serve 20 pessoas.'}];
+ c.kb.faq=[
+  {q:'Vocês fazem bolo sem lactose?',a:'Sim! O bolo de chocolate e a torta de limão têm versão sem lactose, com acréscimo de R$ 15,00.'},
+  {q:'Com quanto tempo de antecedência preciso encomendar?',a:'Pedimos 48 horas de antecedência. Para kits festa, o ideal é 5 dias.'},
+  {q:'Posso personalizar o bolo com nome ou tema?',a:'Pode sim. Topos personalizados custam a partir de R$ 25,00.'}];
+ c.kb.pag='Pix, cartão de crédito em até 3x sem juros, cartão de débito e dinheiro na retirada. Encomendas são confirmadas com 50% de sinal.';
+ c.kb.ent='Entregamos em Curitiba e região metropolitana. Taxa a partir de R$ 8,00 e grátis em pedidos acima de R$ 150,00. Também é possível retirar na loja.';
+ c.kb.ai={nome:'Bia',tom:'Simpático e próximo',boas:'Oi! Eu sou a Bia, assistente da Doce Sabor Confeitaria. Posso te ajudar com bolos, doces, salgados e encomendas. O que você procura hoje?',transfer:true};
+ c.kb.files=[{n:'cardapio-natal-2026.pdf',t:'Catálogo de produtos',s:'412 KB',st:'ok',dt:'20/11/2026'},{n:'tabela-de-precos.csv',t:'Tabela de preços',s:'3 KB',st:'ok',dt:'20/11/2026'},{n:'politica-de-entrega.docx',t:'Documento',s:'28 KB',st:'ok',dt:'18/11/2026'},{n:'vitrine-bolos.jpg',t:'Foto',s:'1,2 MB',st:'ok',dt:'18/11/2026'}];
+ c.stats=true;
+ c.convs=[
+  {id:1,nome:'Carla Mendes',tel:'(41) 99812-3344',st:'venda',h:'11:24',m:[['c','Oi, quanto custa o bolo de chocolate?','11:20'],['ia','Oi, Carla! O bolo de chocolate de 1 kg sai por R$ 89,90 e serve 10 pessoas. Quer encomendar para qual dia?','11:20'],['c','Sábado de manhã','11:22'],['ia','Perfeito! Separei para sábado. Prefere Pix ou cartão em até 3x?','11:22'],['c','Pix','11:23'],['ia','Combinado! Enviei a chave Pix. Assim que o sinal for confirmado, seu pedido fica garantido.','11:24']]},
+  {id:2,nome:'Rafael Souza',tel:'(41) 98877-1020',st:'ia',h:'11:18',m:[['c','Vocês entregam em São José dos Pinhais?','11:17'],['ia','Entregamos sim, Rafael! A taxa começa em R$ 8,00 e é grátis acima de R$ 150,00. Posso te mostrar os kits festa?','11:18']]},
+  {id:3,nome:'Juliana Prado',tel:'(41) 99654-7781',st:'humano',h:'10:52',m:[['c','Preciso de um bolo de 3 andares para casamento, vocês fazem?','10:50'],['ia','Que lindo, Juliana! Bolos de casamento são feitos sob medida. Vou chamar nossa confeiteira para montar seu orçamento.','10:51'],['h','Oi Juliana, aqui é a Paula! Me conta a data e o número de convidados?','10:52']]},
+  {id:4,nome:'Marcos Oliveira',tel:'(41) 99100-4455',st:'venda',h:'10:31',m:[['c','Quero o kit festa para domingo','10:25'],['ia','Ótima escolha! O kit festa sai por R$ 289,00 e serve 20 pessoas. Retirada ou entrega?','10:26'],['c','Entrega','10:28'],['ia','Entrega grátis por ser acima de R$ 150,00. Me passa o endereço completo?','10:28'],['c','Rua Itupava, 1200','10:30'],['ia','Pedido confirmado para domingo! Obrigada, Marcos.','10:31']]},
+  {id:5,nome:'Ana Beatriz',tel:'(41) 98450-9090',st:'ia',h:'09:58',m:[['c','Qual o horário de vocês no sábado?','09:57'],['ia','No sábado abrimos das 08:00 às 15:00. Posso ajudar com alguma encomenda?','09:58']]},
+  {id:6,nome:'Pedro Lima',tel:'(41) 99733-2121',st:'fim',h:'Ontem',m:[['c','Tem brigadeiro de pistache?','18:40'],['ia','Tem sim! A caixa com 25 brigadeiros gourmet sai por R$ 62,00 e inclui pistache.','18:40'],['c','Obrigado, vou pensar','18:42']]}];
+ return{users:[{email:'demo@pescai.com.br',pass:hash('123456'),cid:'c1',name:'Mariana Lopes'}],companies:{c1:c},session:null};
+}
+let db;try{db=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!db||!db.users)db=seed();
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}};
+const ui={tr:'arquivos',conv:null,cq:'',cf:'todas',test:[],stage:null,lastP:null,editP:-1,rec:1,recEmail:'',recCode:'',testedOnce:false};
+let ros=[];
+
+const me=()=>{const u=db.users.find(u=>u.email===db.session);return u?{u,c:db.companies[u.cid]}:null};
+const toast=(t,err)=>{const el=$('#toast');el.textContent=t;el.className='on'+(err?' err':'');clearTimeout(toast.t);toast.t=setTimeout(()=>el.className='',2600)};
+const go=h=>{if(location.hash==='#'+h)route();else location.hash=h};
+const ini=n=>String(n||'?').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('');
+const avatar=(p)=>p.logo?`<img alt="" src="${esc(p.logo)}">`:esc(ini(p.nome));
+
+/* ---------- AUTENTICAÇÃO ---------- */
+function authView(v){
+ const f=$('#authForm');
+ if(v==='cadastro')f.innerHTML=`<form data-form="cadastro" novalidate>
+  <h2>Crie a conta da sua empresa</h2><p class="lead">Comece a vender pelo WhatsApp com IA em poucos minutos.</p>
+  <div class="f"><label for="cEmp">Nome da empresa</label><input class="in" id="cEmp" name="emp" required></div>
+  <div class="row"><div class="f"><label for="cSeg">Segmento</label><select class="in" id="cSeg" name="seg">${SEG.map(s=>`<option>${s}</option>`).join('')}</select></div>
+  <div class="f"><label for="cTel">WhatsApp da empresa</label><input class="in" id="cTel" name="tel" inputmode="tel" placeholder="(41) 99999-9999"></div></div>
+  <div class="f"><label for="cNome">Seu nome</label><input class="in" id="cNome" name="nome" required></div>
+  <div class="f"><label for="cMail">E-mail</label><input class="in" id="cMail" name="email" type="email" required autocomplete="email"></div>
+  <div class="row"><div class="f"><label for="cPass">Senha</label><input class="in" id="cPass" name="pass" type="password" minlength="6" autocomplete="new-password"></div>
+  <div class="f"><label for="cPass2">Confirmar senha</label><input class="in" id="cPass2" name="pass2" type="password" autocomplete="new-password"></div></div>
+  <button class="btn pri">Criar conta</button>
+  <p class="alt">Já tem conta? <a href="#login">Entrar</a></p></form>`;
+ else if(v==='recuperar')f.innerHTML=ui.rec===1?`<form data-form="rec1" novalidate>
+  <h2>Recuperar senha</h2><p class="lead">Informe o e-mail da conta e enviaremos um código para criar uma nova senha.</p>
+  <div class="f"><label for="rMail">E-mail</label><input class="in" id="rMail" name="email" type="email" required></div>
+  <button class="btn pri">Enviar código</button><p class="alt"><a href="#login">Voltar para o login</a></p></form>`
+ :`<form data-form="rec2" novalidate>
+  <h2>Crie uma nova senha</h2><p class="lead">Se ${esc(ui.recEmail)} estiver cadastrado, o código foi enviado.</p>
+  <p class="note" style="margin-bottom:16px">Protótipo: o código de teste é <b>${ui.recCode}</b>. Na versão final ele chega por e-mail.</p>
+  <div class="f"><label for="rCode">Código de 6 dígitos</label><input class="in" id="rCode" name="code" inputmode="numeric" maxlength="6"></div>
+  <div class="f"><label for="rPass">Nova senha</label><input class="in" id="rPass" name="pass" type="password" minlength="6"></div>
+  <button class="btn pri">Salvar nova senha</button><p class="alt"><button type="button" class="lk" data-act="recback">Usar outro e-mail</button></p></form>`;
+ else f.innerHTML=`<form data-form="login" novalidate>
+  <h2>Bem-vindo de volta</h2><p class="lead">Entre para acompanhar suas conversas e vendas.</p>
+  <div class="f"><label for="lMail">E-mail</label><input class="in" id="lMail" name="email" type="email" autocomplete="email" value="demo@pescai.com.br"></div>
+  <div class="f"><label for="lPass">Senha</label><input class="in" id="lPass" name="pass" type="password" autocomplete="current-password" value="123456"></div>
+  <p style="text-align:right;margin:-4px 0 14px"><a class="lk" href="#recuperar">Esqueci minha senha</a></p>
+  <button class="btn pri">Entrar</button>
+  <p class="note sm" style="margin-top:16px">Conta de demonstração já preenchida: demo@pescai.com.br · senha 123456</p>
+  <p class="alt">Ainda não tem conta? <a href="#cadastro">Cadastre sua empresa</a></p></form>`;
+}
+
+/* ---------- SHELL ---------- */
+const ICON={painel:'M4 4h7v7H4zM13 4h7v4h-7zM13 10h7v10h-7zM4 13h7v7H4z',conversas:'M4 5h16v11H9l-5 4z',treinamento:'M12 3l2.2 5.3L19.5 10.5l-5.3 2.2L12 18l-2.2-5.3L4.5 10.5l5.3-2.2zM19 16l.9 2.1 2.1.9-2.1.9L19 22l-.9-2.1-2.1-.9 2.1-.9z',testar:'M5 4l14 8-14 8z',perfil:'M4 20V7l8-4 8 4v13M9 20v-5h6v5M8 9h2M14 9h2M8 12h2M14 12h2'};
+const VIEWS={painel:['Painel','Visão geral dos últimos 30 dias'],conversas:['Conversas','Atendimentos do WhatsApp em tempo real'],treinamento:['Treinamento da IA','Ensine a sua IA tudo sobre o seu negócio'],testar:['Testar IA','Converse com a sua IA como se fosse um cliente'],perfil:['Perfil da empresa','Dados usados pela IA e exibidos aos clientes']};
+
+function route(){
+ ros.forEach(r=>r.disconnect());ros=[];
+ let h=location.hash.slice(1);const s=me();
+ if(!s){if(!['login','cadastro','recuperar'].includes(h))h='login';$('#app').classList.add('hide');$('#auth').classList.remove('hide');authView(h);return}
+ if(!VIEWS[h])h='painel';
+ $('#auth').classList.add('hide');$('#app').classList.remove('hide');
+ $('#nav').innerHTML=Object.keys(VIEWS).map(k=>`<a href="#${k}" class="${k===h?'on':''}"><svg viewBox="0 0 24 24"><path d="${ICON[k]}"/></svg>${VIEWS[k][0]}</a>`).join('');
+ $('#pgT').textContent=VIEWS[h][0];$('#pgS').textContent=VIEWS[h][1];
+ $('#whoAv').innerHTML=avatar(s.c.profile);$('#whoN').textContent=s.c.profile.nome;$('#whoE').textContent=s.u.email;
+ ({painel,conversas,treinamento,testar,perfil})[h](s);
+ if(route.last!==h){window.scrollTo(0,0);route.last=h}
+}
+
+/* ---------- PAINEL ---------- */
+function series(){const d=[],c=[],v=[],t=new Date();for(let i=0;i<30;i++){const dt=new Date(t);dt.setDate(t.getDate()-29+i);d.push(String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0'));const x=Math.round(38+i*.9+9*Math.sin(i/2.3)+(dt.getDay()===6?12:0));c.push(x);v.push(Math.round(x*(.2+.05*Math.sin(i/4)+i*.002)))}return{d,c,v}}
+function painel({c}){
+ const has=!!c.stats,S=has?series():null;
+ const tot=has?S.c.reduce((a,b)=>a+b,0):0,ven=has?S.v.reduce((a,b)=>a+b,0):0,cli=Math.round(tot*.86),taxa=tot?ven/tot*100:0,and=has?c.convs.filter(x=>x.st==='ia'||x.st==='humano').length+15:0;
+ const k=[['Total de conversas',num(tot),'+18% vs. mês anterior'],['Clientes atendidos',num(cli),'+14%'],['Vendas realizadas',num(ven),'+22%'],['Taxa de conversão',taxa.toLocaleString('pt-BR',{maximumFractionDigits:1})+'%','+1,4 p.p.'],['Em andamento',num(and),'agora']];
+ const kb=c.kb,done=[!!(c.profile.end&&c.profile.tel),kb.products.length+kb.files.length+kb.faq.length>0,ui.testedOnce||has,false];
+ const onb=has?'':`<div class="card" style="margin-bottom:16px"><h2>Vamos colocar sua IA para vender</h2><p class="mut">Siga os passos abaixo. Os números do painel aparecem assim que o WhatsApp estiver conectado.</p>
+  <div class="steps">${[['Complete o perfil da empresa','Endereço, telefone e horários','perfil'],['Treine a sua IA','Envie catálogo, preços e perguntas frequentes','treinamento'],['Teste o atendimento','Converse com a IA como um cliente','testar'],['Conecte o WhatsApp','Disponível na versão com servidor','painel']].map((s,i)=>`<a class="step ${done[i]?'done':''}" href="#${s[2]}"><span class="ck">${done[i]?'✓':i+1}</span><span><b>${s[0]}</b><br><span class="mut sm">${s[1]}</span></span></a>`).join('')}</div></div>`;
+ const fun=[['Conversas iniciadas',tot],['Pediram preço ou informação',Math.round(tot*.62)],['Receberam proposta',Math.round(tot*.41)],['Compraram',ven]];
+ const pico=[['08h–10h',42],['10h–12h',71],['12h–14h',58],['14h–16h',49],['16h–18h',66],['18h–22h',100]];
+ const act=[['ok','Venda fechada pela IA','Carla Mendes · Bolo de chocolate (1 kg) · R$ 89,90','há 4 min'],['n','Nova conversa','Rafael Souza perguntou sobre entrega','há 10 min'],['warn','Transferida para humano','Juliana Prado · orçamento de bolo de casamento','há 36 min'],['ok','Venda fechada pela IA','Marcos Oliveira · Kit festa · R$ 289,00','há 57 min'],['n','IA aprendeu','cardapio-natal-2026.pdf foi processado','20/11']];
+ $('#view').innerHTML=onb+`
+ <div class="kpis">${k.map((x,i)=>`<div class="card kpi ${i===2?'hero':''}"><div class="l">${x[0]}</div><div class="v">${x[1]}</div><div class="d">${has?x[2]:'—'}</div></div>`).join('')}</div>
+ ${has?`<div class="g2"><div class="card"><div class="ch"><div><h2>Conversas e vendas por dia</h2><p class="mut sm">Vendas crescem mais rápido que as conversas: a IA está convertendo melhor.</p></div><div class="legend"><span><i style="background:#e3122d"></i>Conversas</span><span><i style="background:var(--line2)"></i>Vendas</span></div></div><div class="fig" id="fig"><svg role="img" aria-label="Gráfico de conversas e vendas nos últimos 30 dias"></svg></div></div>
+ <div class="card"><h2 style="margin-bottom:4px">Funil de vendas</h2><p class="mut sm" style="margin-bottom:16px">Do primeiro “oi” até a compra</p><div class="bars">${fun.map(f=>`<div class="bar"><div class="bl"><span>${f[0]}</span><b>${num(f[1])}</b></div><div class="tr"><span style="width:${(f[1]/tot*100).toFixed(1)}%"></span></div></div>`).join('')}</div>
+ <h3 style="margin:22px 0 12px">Horários de pico</h3><div class="bars">${pico.map(p=>`<div class="bar"><div class="bl"><span>${p[0]}</span><b>${p[1]}%</b></div><div class="tr"><span style="width:${p[1]}%;opacity:${.45+p[1]/200}"></span></div></div>`).join('')}</div></div></div>
+ <div class="g2b"><div class="card"><h2 style="margin-bottom:6px">Atividade recente</h2><ul class="act">${act.map(a=>`<li><span class="dot ${a[0]}"></span><div><b>${a[1]}</b><div class="mut sm">${a[2]}</div></div><span class="h">${a[3]}</span></li>`).join('')}</ul></div>
+ <div class="card"><h2 style="margin-bottom:14px">Desempenho da IA</h2><div class="bars">${[['Atendimentos resolvidos sem humano','87%',87],['Respostas em menos de 10 segundos','99%',99],['Clientes que voltaram a comprar','34%',34]].map(p=>`<div class="bar"><div class="bl"><span>${p[0]}</span><b>${p[1]}</b></div><div class="tr"><span style="width:${p[2]}%"></span></div></div>`).join('')}</div><p class="mut sm" style="margin-top:18px">Números de exemplo da conta demonstrativa.</p></div></div>`
+ :`<div class="card empty"><h3>Sem dados ainda</h3><p>Gráficos de desempenho e atividade recente aparecem aqui quando as primeiras conversas chegarem.</p></div>`}`;
+ if(has){const s=$('#fig svg');const draw=()=>drawLine(s,S);const ro=new ResizeObserver(draw);ro.observe(s);ros.push(ro)}
+}
+function drawLine(s,D){
+ const W=s.clientWidth,H=s.clientHeight;if(!W||!H)return;
+ const p={l:36,r:14,t:14,b:30},n=D.c.length,max=Math.ceil(Math.max(...D.c)/20)*20;
+ const x=i=>p.l+i*(W-p.l-p.r)/(n-1),y=v=>H-p.b-v/max*(H-p.t-p.b);
+ let g='';for(let k=0;k<=4;k++){const v=max*k/4;g+=`<line class="gl" x1="${p.l}" x2="${W-p.r}" y1="${y(v)}" y2="${y(v)}"/><text class="tk" x="${p.l-8}" y="${y(v)+4}" text-anchor="end">${v}</text>`}
+ const path=a=>a.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join('');
+ const step=W<520?10:5;let lab='';for(let i=0;i<n;i+=step)lab+=`<text class="tk" x="${x(i)}" y="${H-8}" text-anchor="middle">${D.d[i]}</text>`;
+ s.innerHTML=`<defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3122d" stop-opacity=".25"/><stop offset="1" stop-color="#e3122d" stop-opacity="0"/></linearGradient></defs>${g}<path d="${path(D.c)}L${x(n-1)} ${y(0)}L${x(0)} ${y(0)}Z" fill="url(#ga)"/><path d="${path(D.c)}" fill="none" stroke="#e3122d" stroke-width="2.5" stroke-linejoin="round"/><path d="${path(D.v)}" fill="none" style="stroke:var(--line2)" stroke-width="2.5" stroke-linejoin="round"/><circle cx="${x(n-1)}" cy="${y(D.c[n-1])}" r="4.5" fill="#e3122d"/><circle cx="${x(n-1)}" cy="${y(D.v[n-1])}" r="4.5" style="fill:var(--line2)"/>${lab}`;
+}
+
+/* ---------- CONVERSAS ---------- */
+const ST={ia:['IA atendendo',''],venda:['Venda fechada','ok'],humano:['Com atendente','warn'],fim:['Encerrada','n']};
+function conversas({c}){
+ if(!c.convs.length){$('#view').innerHTML=`<div class="card empty"><h3>Nenhuma conversa ainda</h3><p>Quando o WhatsApp da empresa estiver conectado, cada atendimento da IA aparece aqui — e você pode assumir qualquer conversa quando quiser.</p><p style="margin-top:16px"><a class="btn pri" href="#testar">Testar a IA agora</a></p></div>`;return}
+ const q=norm(ui.cq),L=c.convs.filter(x=>(ui.cf==='todas'||x.st===ui.cf)&&(!q||norm(x.nome+' '+x.m.map(m=>m[1]).join(' ')).includes(q)));
+ const cur=c.convs.find(x=>x.id===ui.conv);
+ $('#view').innerHTML=`<div class="card conv ${cur?'open':''}">
+  <div class="clist"><div class="tools"><input class="in" id="cq" placeholder="Buscar cliente ou mensagem" value="${esc(ui.cq)}" aria-label="Buscar conversas">
+   <div class="chips">${[['todas','Todas'],['ia','IA'],['humano','Humano'],['venda','Vendas']].map(f=>`<button class="chip ${ui.cf===f[0]?'on':''}" data-act="cf" data-v="${f[0]}">${f[1]}</button>`).join('')}</div></div>
+   ${L.map(x=>`<button class="citem ${x.id===ui.conv?'on':''}" data-act="conv" data-id="${x.id}"><div class="av">${esc(ini(x.nome))}</div><div class="t"><b>${esc(x.nome)}</b><span>${esc(x.m[x.m.length-1][1])}</span><div style="margin-top:6px"><span class="badge ${ST[x.st][1]}">${ST[x.st][0]}</span></div></div><span class="mut sm">${esc(x.h)}</span></button>`).join('')||'<p class="empty">Nada encontrado.</p>'}
+  </div>
+  <div class="thread">${cur?`<div class="thd"><button class="btn sm x" data-act="convback" aria-label="Voltar">←</button><div class="av">${esc(ini(cur.nome))}</div><div style="flex:1"><b>${esc(cur.nome)}</b><div class="mut sm">${esc(cur.tel)}</div></div><span class="badge ${ST[cur.st][1]}">${ST[cur.st][0]}</span>
+   ${cur.st==='ia'?'<button class="btn sm" data-act="assumir">Assumir atendimento</button>':cur.st==='humano'?'<button class="btn sm" data-act="devolver">Devolver para a IA</button>':''}${cur.st!=='venda'?'<button class="btn sm pri" data-act="marcarvenda">Marcar venda</button>':''}</div>
+   <div class="msgs" id="msgs">${cur.m.map(m=>`<div class="b ${m[0]}">${esc(m[1])}<small>${m[0]==='ia'?'IA · ':m[0]==='h'?'Atendente · ':''}${esc(m[2])}</small></div>`).join('')}</div>
+   <form class="send" data-form="hsend"><input class="in" name="t" placeholder="${cur.st==='humano'?'Responder como atendente':'Assuma o atendimento para responder'}" ${cur.st==='humano'?'':'disabled'} aria-label="Mensagem"><button class="btn pri" ${cur.st==='humano'?'':'disabled'}>Enviar</button></form>`
+   :`<div class="empty" style="margin:auto"><h3>Selecione uma conversa</h3><p>Acompanhe a IA ou assuma o atendimento a qualquer momento.</p></div>`}</div></div>`;
+ const m=$('#msgs');if(m)m.scrollTop=m.scrollHeight;
+}
+
+/* ---------- TREINAMENTO ---------- */
+function nivel(c){const k=c.kb;let v=Math.min(k.products.length,8)/8*30+Math.min(k.faq.length,5)/5*20+(k.pag?10:0)+(k.ent?10:0)+Math.min(k.files.length+k.notes.length,4)/4*15+(c.profile.horas.some(h=>h.on)&&c.profile.end?10:0)+(k.ai.boas?5:0);return Math.round(v)}
+function treinamento({c}){
+ const k=c.kb,n=nivel(c),T=[['arquivos','Arquivos'],['produtos','Produtos e preços'],['faq','Perguntas frequentes'],['condicoes','Pagamento e entrega'],['comportamento','Comportamento da IA']];
+ let body='';
+ if(ui.tr==='arquivos')body=`<label class="drop" id="drop" for="fileIn"><svg viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg><b style="font-size:17px">Arraste arquivos aqui ou clique para enviar</b><span class="mut sm">A IA lê o conteúdo, organiza o conhecimento e passa a usar nas respostas.</span><span class="types">${['PDF','Fotos','Documentos','Texto (.txt)','Catálogos','Tabelas de preços (.csv)'].map(t=>`<span class="badge n">${t}</span>`).join('')}</span></label>
+  <input type="file" id="fileIn" multiple accept=".pdf,.png,.jpg,.jpeg,.webp,.doc,.docx,.txt,.md,.csv,.xls,.xlsx" class="hide">
+  <p class="note" style="margin:14px 0">Tabelas .csv no formato <b>produto;preço;descrição</b> viram produtos na hora, e arquivos .txt viram conhecimento que a IA consulta. A leitura de PDF, Word e fotos (OCR) entra na versão com servidor.</p>
+  ${k.files.length?`<table class="stack"><thead><tr><th>Arquivo</th><th>Tipo</th><th>Tamanho</th><th>Status</th><th></th></tr></thead><tbody>${k.files.map((f,i)=>`<tr><td><b>${esc(f.n)}</b><div class="mut sm">Enviado em ${esc(f.dt)}</div></td><td>${esc(f.t)}</td><td class="n">${esc(f.s)}</td><td>${f.st==='ok'?'<span class="badge ok">Aprendido</span>':f.st==='fila'?'<span class="badge n">Aguardando leitura</span>':'<span class="badge warn">Processando…</span>'}</td><td><button class="btn sm x" data-act="delfile" data-i="${i}" aria-label="Remover arquivo">Remover</button></td></tr>`).join('')}</tbody></table>`:'<p class="empty">Nenhum arquivo enviado ainda.</p>'}`;
+ if(ui.tr==='produtos'){const e=ui.editP>=0?k.products[ui.editP]:{n:'',c:'',p:'',d:''};body=`<form class="card" data-form="prod" style="margin-bottom:16px"><h3 style="margin-bottom:12px">${ui.editP>=0?'Editar produto':'Adicionar produto ou serviço'}</h3>
+  <div class="row"><div class="f"><label for="pN">Nome</label><input class="in" id="pN" name="n" value="${esc(e.n)}" required></div><div class="f"><label for="pC">Categoria</label><input class="in" id="pC" name="c" value="${esc(e.c)}"></div><div class="f"><label for="pP">Preço (R$)</label><input class="in" id="pP" name="p" inputmode="decimal" value="${e.p!==''?esc(String(e.p).replace('.',',')):''}"></div></div>
+  <div class="f"><label for="pD">Características</label><textarea class="in" id="pD" name="d" placeholder="Tamanho, sabores, para quantas pessoas, diferenciais…">${esc(e.d)}</textarea></div>
+  <button class="btn pri">${ui.editP>=0?'Salvar alterações':'Adicionar'}</button> ${ui.editP>=0?'<button type="button" class="btn" data-act="canceledit">Cancelar</button>':''}</form>
+  ${k.products.length?`<table class="stack"><thead><tr><th>Produto</th><th>Categoria</th><th style="text-align:right">Preço</th><th></th></tr></thead><tbody>${k.products.map((p,i)=>`<tr><td><b>${esc(p.n)}</b><div class="mut sm">${esc(p.d)}</div></td><td>${esc(p.c)}</td><td class="n">${brl(p.p)}</td><td style="white-space:nowrap"><button class="btn sm x" data-act="editp" data-i="${i}">Editar</button><button class="btn sm x" data-act="delp" data-i="${i}">Excluir</button></td></tr>`).join('')}</tbody></table>`:'<p class="empty">Nenhum produto cadastrado.</p>'}`}
+ if(ui.tr==='faq')body=`<form class="card" data-form="faq" style="margin-bottom:16px"><h3 style="margin-bottom:12px">Nova pergunta frequente</h3><div class="f"><label for="qQ">Pergunta do cliente</label><input class="in" id="qQ" name="q" required></div><div class="f"><label for="qA">Resposta da IA</label><textarea class="in" id="qA" name="a" required></textarea></div><button class="btn pri">Adicionar</button></form>
+  ${k.faq.map((f,i)=>`<div class="faq"><div><b>${esc(f.q)}</b><p class="mut" style="margin-top:4px">${esc(f.a)}</p></div><button class="btn sm x" data-act="delfaq" data-i="${i}">Excluir</button></div>`).join('')||'<p class="empty">Nenhuma pergunta cadastrada.</p>'}`;
+ if(ui.tr==='condicoes')body=`<form class="card" data-form="cond"><div class="f"><label for="kPag">Formas de pagamento</label><textarea class="in" id="kPag" name="pag" placeholder="Pix, cartão em até 3x, boleto…">${esc(k.pag)}</textarea></div><div class="f"><label for="kEnt">Condições de entrega</label><textarea class="in" id="kEnt" name="ent" placeholder="Regiões atendidas, taxas, prazos, retirada…">${esc(k.ent)}</textarea></div><button class="btn pri">Salvar</button></form>`;
+ if(ui.tr==='comportamento')body=`<form class="card" data-form="ai"><div class="row"><div class="f"><label for="aN">Nome da assistente</label><input class="in" id="aN" name="nome" value="${esc(k.ai.nome)}"></div><div class="f"><label for="aT">Tom de voz</label><select class="in" id="aT" name="tom">${['Simpático e próximo','Profissional e objetivo','Formal','Descontraído'].map(t=>`<option ${t===k.ai.tom?'selected':''}>${t}</option>`).join('')}</select></div></div>
+  <div class="f"><label for="aB">Mensagem de boas-vindas</label><textarea class="in" id="aB" name="boas">${esc(k.ai.boas)}</textarea></div>
+  <div class="f" style="display:flex;gap:12px;align-items:center"><label class="sw" style="margin:0"><input type="checkbox" name="transfer" ${k.ai.transfer?'checked':''}><span></span></label><span>Quando não souber a resposta, transferir para um atendente humano</span></div>
+  <button class="btn pri">Salvar comportamento</button></form>`;
+ $('#view').innerHTML=`<div class="card"><div class="ch" style="margin:0 0 10px"><div><h2>Nível de conhecimento da IA</h2><p class="mut sm">${k.products.length} produtos · ${k.faq.length} perguntas · ${k.files.length} arquivos · base exclusiva da ${esc(c.profile.nome)}</p></div><a class="btn sm" href="#testar">Testar IA</a></div>
+  <div class="meter"><div class="tr"><span style="width:${n}%"></span></div><b>${n}%</b></div></div>
+  <div class="tabs" role="tablist">${T.map(t=>`<button class="tab ${ui.tr===t[0]?'on':''}" role="tab" aria-selected="${ui.tr===t[0]}" data-act="tab" data-v="${t[0]}">${t[1]}</button>`).join('')}</div>${body}`;
+ if(ui.tr==='arquivos'){const d=$('#drop'),fi=$('#fileIn');fi.addEventListener('change',()=>{addFiles(fi.files);fi.value=''});
+  ['dragenter','dragover'].forEach(e=>d.addEventListener(e,ev=>{ev.preventDefault();d.classList.add('over')}));['dragleave','drop'].forEach(e=>d.addEventListener(e,ev=>{ev.preventDefault();d.classList.remove('over')}));d.addEventListener('drop',ev=>addFiles(ev.dataTransfer.files))}
+}
+function tipo(n){const e=n.split('.').pop().toLowerCase();if(e==='pdf')return/cat|card|menu/i.test(n)?'Catálogo de produtos':'PDF';if(['png','jpg','jpeg','webp'].includes(e))return'Foto';if(['csv','xls','xlsx'].includes(e))return'Tabela de preços';if(['txt','md'].includes(e))return'Arquivo de texto';return'Documento'}
+const kb_=b=>b<1048576?Math.max(1,Math.round(b/1024))+' KB':(b/1048576).toFixed(1).replace('.',',')+' MB';
+function addFiles(list){
+ const {c}=me(),today=new Date().toLocaleDateString('pt-BR');let added=0;
+ for(const f of list){
+  const e=f.name.split('.').pop().toLowerCase(),reads=['txt','md','csv'].includes(e);
+  const rec={n:f.name,t:tipo(f.name),s:kb_(f.size),st:'proc',dt:today};c.kb.files.unshift(rec);added++;
+  const fin=()=>{rec.st=reads?'ok':'fila';save();if(location.hash==='#treinamento')route()};
+  if(reads){const r=new FileReader();r.onload=()=>{const t=String(r.result);let np=0;
+   if(e==='csv'){t.split(/\r?\n/).forEach((ln,i)=>{const p=ln.split(/[;\t]/).length>1?ln.split(/[;\t]/):ln.split(',');if(p.length<2)return;const pr=parseFloat(String(p[1]).replace(/[^\d,.-]/g,'').replace(/\.(?=\d{3})/g,'').replace(',','.'));if(isNaN(pr))return;c.kb.products.push({n:p[0].trim(),c:'Importado',p:pr,d:(p[2]||'').trim()});np++})}
+   else t.split(/\n{1,}|(?<=[.!?])\s+/).map(s=>s.trim()).filter(s=>s.length>12).forEach(s=>c.kb.notes.push(s));
+   setTimeout(()=>{fin();toast(np?`${np} produtos importados de ${f.name}`:`${f.name} foi aprendido pela IA`)},900)};r.readAsText(f)}
+  else setTimeout(fin,900);
+ }
+ if(added){save();route()}
+}
+
+/* ---------- TESTAR IA (motor de demonstração) ---------- */
+const STOP=new Set('que qual quais voces vcs para com uma tem dos das por favor quanto custa preco precos valor sobre como isso esse essa mim meu minha ola bom dia tarde noite quero gostaria pode poderia saber voce sim nao mais tudo tambem ai ate'.split(' '));
+const toks=s=>norm(s).split(/[^a-z0-9]+/).filter(w=>w.length>2&&!STOP.has(w));
+const has=(t,re)=>re.test(norm(t));
+function horasTxt(p){const on=p.horas.filter(h=>h.on);if(!on.length)return'';return on.map(h=>`${h.d}: ${h.a} às ${h.f}`).join('\n')+(p.horas.some(h=>!h.on)?'\n'+p.horas.filter(h=>!h.on).map(h=>h.d).join(', ')+': fechado':'')}
+function matchProd(k,t){const q=toks(t);if(!q.length)return[];return k.products.map(p=>{const nt=toks(p.n+' '+p.c);let s=0;q.forEach(w=>{if(nt.some(x=>x.startsWith(w)||w.startsWith(x)))s+=2;else if(norm(p.d).includes(w))s+=.5});return{p,s}}).filter(x=>x.s>=2).sort((a,b)=>b.s-a.s)}
+function answer(c,t){
+ const k=c.kb,p=c.profile,ai=k.ai;
+ if(ui.stage==='dados'&&!t.includes('?')){ui.stage='pag';return`Anotado! ${k.pag?'Para finalizar, como prefere pagar? Aceitamos: '+k.pag:'Como prefere pagar?'}`}
+ if(ui.stage==='pag'&&!t.includes('?')){ui.stage=null;const lp=ui.lastP;ui.lastP=null;return`Pedido confirmado${lp?': '+lp.n+' ('+brl(lp.p)+' cada)':''}! Já registrei aqui e nossa equipe vai te mandar a confirmação. Obrigada pela preferência!\n\n[Venda registrada no painel]`}
+ if(has(t,/^(oi|ola|opa|bom dia|boa tarde|boa noite|e ai)[\s!.,]*$/))return ai.boas;
+ if(has(t,/horario|abre|abert|fecha|funciona|atend(e|imento) (hoje|que horas)|que horas/)){const h=horasTxt(p);return h?`Nosso horário de funcionamento:\n${h}`:'Ainda não tenho o horário cadastrado. Vou confirmar com a equipe!'}
+ if(has(t,/endereco|onde fica|localiza|como chego|loja fisica/))return p.end?`Estamos em ${p.end}.`:'Ainda não tenho o endereço cadastrado.';
+ if(has(t,/pagamento|pagar|pix|cartao|parcel|boleto|dinheiro/))return k.pag?`Formas de pagamento: ${k.pag}`:'Vou confirmar as formas de pagamento com a equipe.';
+ if(has(t,/entreg|frete|taxa de|delivery|retir|envia|enviam/))return k.ent||'Vou confirmar as condições de entrega com a equipe.';
+ const qq=toks(t);let fq=null,fs=0;k.faq.forEach(f=>{const ft=toks(f.q);const sc=qq.filter(w=>ft.some(x=>x.startsWith(w.slice(0,5)))).length/Math.max(2,Math.min(qq.length,ft.length));if(sc>fs){fs=sc;fq=f}});
+ if(fq&&fs>=.6&&!has(t,/quanto|preco|valor|custa/))return fq.a;
+ const pm=matchProd(k,t);
+ if(has(t,/quero|pedido|encomend|comprar|fechar|vou levar|reservar/)&&(pm.length||ui.lastP)){const pr=pm.length?pm[0].p:ui.lastP;ui.lastP=pr;ui.stage='dados';return`Ótima escolha! ${pr.n} sai por ${brl(pr.p)}. Para eu finalizar, me diga: quantidade, data e se prefere retirada ou entrega (com endereço).`}
+ if(has(t,/indica|sugest|sugere|recomend|melhor|ajuda a escolher|nao sei qual|para \d+ pessoas|\d+ pessoas/)&&k.products.length){const m=norm(t).match(/(\d+)\s*pessoas/);let L=k.products;if(m){const want=+m[1];const sc=L.map(p=>{const x=norm(p.d).match(/(\d+)\s*(a\s*\d+\s*)?pessoas/);return{p,d:x?Math.abs(+x[1]-want):99}}).sort((a,b)=>a.d-b.d);L=sc.filter(s=>s.d<99).slice(0,2).map(s=>s.p);if(!L.length)L=k.products.slice(0,3)}else L=L.slice(0,3);ui.lastP=L[0];return`Posso te indicar:\n${L.map(p=>`• ${p.n} — ${brl(p.p)}${p.d?'. '+p.d:''}`).join('\n')}\n\nQuer que eu reserve algum deles?`}
+ if(pm.length){const top=pm.filter(x=>x.s===pm[0].s).slice(0,3);ui.lastP=top[0].p;if(top.length===1){const x=top[0].p;return`${x.n}: ${brl(x.p)}.${x.d?' '+x.d:''}\n\nQuer fazer o pedido?`}return`Encontrei estas opções:\n${top.map(x=>`• ${x.p.n} — ${brl(x.p.p)}`).join('\n')}\n\nQual delas te interessa?`}
+ if(has(t,/cardapio|catalogo|produtos|opcoes|o que (voces )?(tem|vendem)|lista|servicos/)&&k.products.length){const cats={};k.products.forEach(x=>(cats[x.c||'Outros']=cats[x.c||'Outros']||[]).push(x));return'Aqui está o que temos:\n'+Object.entries(cats).map(([cn,ps])=>`\n${cn}\n${ps.map(x=>`• ${x.n} — ${brl(x.p)}`).join('\n')}`).join('\n')+'\n\nQuer ajuda para escolher?'}
+ const q=toks(t);
+ if(q.length){let best=null,bs=0;k.faq.forEach(f=>{const ft=toks(f.q);const s=q.filter(w=>ft.some(x=>x.startsWith(w.slice(0,5)))).length/Math.max(2,Math.min(q.length,ft.length));if(s>bs){bs=s;best=f}});if(best&&bs>=.5)return best.a;
+  let bn=null,ns=0;k.notes.forEach(s=>{const st=toks(s);const sc=q.filter(w=>st.some(x=>x.startsWith(w.slice(0,5)))).length;if(sc>ns){ns=sc;bn=s}});if(bn&&ns>=Math.min(2,q.length))return bn}
+ if(has(t,/obrigad|valeu|brigad/))return'Eu que agradeço! Se precisar de algo, é só chamar.';
+ return ai.transfer?'Essa eu prefiro confirmar com a nossa equipe para não te passar nada errado. Vou chamar um atendente humano, tudo bem?\n\n[Conversa transferida para humano]':'Não encontrei essa informação. Pode me contar com outras palavras?';
+}
+function testar({c}){
+ const k=c.kb;if(!ui.test.length)ui.test=[['ia',k.ai.boas]];
+ const sug=['Qual o horário de vocês?','O que vocês têm?',k.products[0]?'Quanto custa '+k.products[0].n.replace(/\s*\(.*\)/,'').toLowerCase()+'?':'Quais os preços?','Quais as formas de pagamento?','Vocês entregam?','Me indica algo para 10 pessoas','Quero fazer um pedido'];
+ $('#view').innerHTML=`<div class="tst"><div class="card phone"><div class="thd"><div class="av">${avatar(c.profile)}</div><div style="flex:1"><b>${esc(k.ai.nome)} · ${esc(c.profile.nome)}</b><div class="sm" style="color:#e9c9ce">Simulação do WhatsApp</div></div><button class="btn sm" data-act="resettest" style="background:#ffffff14;color:#fff;border-color:#ffffff33">Reiniciar</button></div>
+  <div class="msgs" id="tmsgs">${ui.test.map(m=>`<div class="b ${m[0]}">${esc(m[1]).replace(/\n/g,'<br>')}</div>`).join('')}</div>
+  <form class="send" data-form="tsend"><input class="in" name="t" placeholder="Escreva como se fosse um cliente…" autocomplete="off" aria-label="Mensagem de teste"><button class="btn pri">Enviar</button></form></div>
+  <div><div class="card"><h2>O que a IA sabe agora</h2><div class="know"><div><b>${k.products.length}</b><span class="mut sm">produtos e preços</span></div><div><b>${k.faq.length}</b><span class="mut sm">perguntas frequentes</span></div><div><b>${k.files.length}</b><span class="mut sm">arquivos enviados</span></div><div><b>${c.profile.horas.filter(h=>h.on).length}</b><span class="mut sm">dias com horário</span></div></div>
+  <h3 style="margin-bottom:10px">Experimente perguntar</h3><div class="chips">${sug.map(s=>`<button class="chip" data-act="sug" data-v="${esc(s)}">${esc(s)}</button>`).join('')}</div></div>
+  <p class="note sm" style="margin-top:16px">Neste protótipo, as respostas são montadas a partir da base cadastrada na empresa. Na versão final, um modelo de linguagem interpreta a conversa e responde com a mesma base, de forma ainda mais natural.</p></div></div>`;
+ const m=$('#tmsgs');m.scrollTop=m.scrollHeight;
+}
+function sendTest(t){
+ const {c}=me();t=t.trim();if(!t)return;ui.testedOnce=true;ui.test.push(['c',t]);testar({c});
+ const m=$('#tmsgs');m.insertAdjacentHTML('beforeend','<div class="b ia typing" id="typ"><span></span><span></span><span></span></div>');m.scrollTop=m.scrollHeight;
+ setTimeout(()=>{ui.test.push(['ia',answer(c,t)]);if(location.hash==='#testar')testar({c});const i=document.querySelector('.send .in');if(i)i.focus()},650);
+}
+
+/* ---------- PERFIL ---------- */
+function perfil({u,c}){
+ const p=c.profile;
+ $('#view').innerHTML=`<form data-form="perfil" class="pf"><div class="card"><h2 style="margin-bottom:16px">Dados da empresa</h2>
+  <div class="logoup"><div class="av" id="lgPrev">${avatar(p)}</div><div><label class="btn sm" for="lgIn" style="margin:0">Enviar logotipo</label><input type="file" id="lgIn" accept="image/*" class="hide"> ${p.logo?'<button type="button" class="btn sm x" data-act="dellogo">Remover</button>':''}<p class="mut sm" style="margin-top:6px">PNG ou JPG, quadrado de preferência.</p></div></div>
+  <div class="f"><label for="pfN">Nome da empresa</label><input class="in" id="pfN" name="nome" value="${esc(p.nome)}" required></div>
+  <div class="row"><div class="f"><label for="pfS">Segmento comercial</label><select class="in" id="pfS" name="segmento">${SEG.map(s=>`<option ${s===p.segmento?'selected':''}>${s}</option>`).join('')}</select></div><div class="f"><label for="pfT">Telefone / WhatsApp</label><input class="in" id="pfT" name="tel" value="${esc(p.tel)}" inputmode="tel"></div></div>
+  <div class="f"><label for="pfE">E-mail comercial</label><input class="in" id="pfE" name="email" type="email" value="${esc(p.email)}"></div>
+  <div class="f"><label for="pfA">Endereço</label><input class="in" id="pfA" name="end" value="${esc(p.end)}" placeholder="Rua, número — bairro, cidade/UF"></div>
+  <p class="note sm">Ambiente exclusivo · ID da conta ${esc(u.cid)} · responsável ${esc(u.name)}. Nenhuma outra empresa acessa estes dados.</p></div>
+  <div class="card"><h2 style="margin-bottom:6px">Horário de funcionamento</h2><p class="mut sm" style="margin-bottom:16px">A IA informa estes horários aos clientes.</p>
+  <div class="hrs">${p.horas.map((h,i)=>`<b>${h.d}</b><label class="sw" style="margin:0" aria-label="Aberto ${h.d}"><input type="checkbox" data-h="${i}" data-k="on" ${h.on?'checked':''}><span></span></label><input class="in" type="time" data-h="${i}" data-k="a" value="${esc(h.a)}" aria-label="Abre ${h.d}"><input class="in" type="time" data-h="${i}" data-k="f" value="${esc(h.f)}" aria-label="Fecha ${h.d}">`).join('')}</div>
+  <button class="btn pri" style="margin-top:20px;width:100%">Salvar perfil</button></div></form>`;
+ $('#lgIn').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;if(f.size>5242880)return toast('Imagem muito grande (máx. 5 MB)',1);const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{const s=256,cv=document.createElement('canvas');cv.width=cv.height=s;const x=cv.getContext('2d'),m=Math.min(im.width,im.height);x.drawImage(im,(im.width-m)/2,(im.height-m)/2,m,m,0,0,s,s);p.logo=cv.toDataURL('image/png');save();route();toast('Logotipo atualizado')};im.src=r.result};r.readAsDataURL(f)});
+}
+
+/* ---------- EVENTOS ---------- */
+document.addEventListener('submit',e=>{
+ const f=e.target,k=f.dataset.form;if(!k)return;e.preventDefault();const d=Object.fromEntries(new FormData(f));const s=me();
+ if(k==='login'){const u=db.users.find(u=>u.email===norm(d.email).trim()&&u.pass===hash(d.pass||''));if(!u)return toast('E-mail ou senha incorretos',1);db.session=u.email;save();ui.test=[];go('painel');toast('Bem-vindo, '+u.name.split(' ')[0]+'!')}
+ if(k==='cadastro'){const em=norm(d.email).trim();if(!d.emp.trim()||!d.nome.trim())return toast('Preencha o nome da empresa e o seu nome',1);if(!/^\S+@\S+\.\S+$/.test(em))return toast('Informe um e-mail válido',1);if(db.users.some(u=>u.email===em))return toast('Este e-mail já tem conta',1);if((d.pass||'').length<6)return toast('A senha precisa de pelo menos 6 caracteres',1);if(d.pass!==d.pass2)return toast('As senhas não conferem',1);
+  const cid='c'+Date.now().toString(36);db.companies[cid]=novaEmpresa(d.emp.trim(),d.seg,d.tel);db.users.push({email:em,pass:hash(d.pass),cid,name:d.nome.trim()});db.session=em;save();ui.test=[];go('painel');toast('Conta criada! Ambiente exclusivo pronto.')}
+ if(k==='rec1'){if(!/^\S+@\S+\.\S+$/.test(d.email))return toast('Informe um e-mail válido',1);ui.recEmail=norm(d.email).trim();ui.recCode=String(100000+Math.floor(Math.random()*900000));ui.rec=2;authView('recuperar')}
+ if(k==='rec2'){if(d.code!==ui.recCode)return toast('Código inválido',1);if((d.pass||'').length<6)return toast('A senha precisa de pelo menos 6 caracteres',1);const u=db.users.find(u=>u.email===ui.recEmail);if(u){u.pass=hash(d.pass);save()}ui.rec=1;go('login');toast('Senha alterada. Faça login.')}
+ if(!s)return;const c=s.c;
+ if(k==='prod'){const pr=parseFloat(String(d.p).replace(/\./g,'').replace(',','.'));if(!d.n.trim())return toast('Informe o nome',1);const o={n:d.n.trim(),c:d.c.trim(),p:isNaN(pr)?0:pr,d:d.d.trim()};if(ui.editP>=0)c.kb.products[ui.editP]=o;else c.kb.products.push(o);ui.editP=-1;save();route();toast('Produto salvo')}
+ if(k==='faq'){c.kb.faq.push({q:d.q.trim(),a:d.a.trim()});save();route();toast('Pergunta adicionada')}
+ if(k==='cond'){c.kb.pag=d.pag.trim();c.kb.ent=d.ent.trim();save();route();toast('Condições salvas')}
+ if(k==='ai'){Object.assign(c.kb.ai,{nome:d.nome.trim()||'Assistente',tom:d.tom,boas:d.boas.trim(),transfer:!!d.transfer});ui.test=[];save();route();toast('Comportamento salvo')}
+ if(k==='perfil'){Object.assign(c.profile,{nome:d.nome.trim()||c.profile.nome,segmento:d.segmento,tel:d.tel.trim(),email:d.email.trim(),end:d.end.trim()});f.querySelectorAll('[data-h]').forEach(i=>{const h=c.profile.horas[i.dataset.h];h[i.dataset.k]=i.type==='checkbox'?i.checked:i.value});save();route();toast('Perfil salvo')}
+ if(k==='tsend'){const i=f.querySelector('input');sendTest(i.value)}
+ if(k==='hsend'){const cv=c.convs.find(x=>x.id===ui.conv),t=(d.t||'').trim();if(!cv||!t)return;const h=new Date().toTimeString().slice(0,5);cv.m.push(['h',t,h]);cv.h=h;save();route()}
+});
+document.addEventListener('click',e=>{
+ const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,s=me(),c=s&&s.c,i=+b.dataset.i;
+ if(a==='logout'){db.session=null;save();ui.test=[];ui.conv=null;go('login')}
+ if(a==='recback'){ui.rec=1;authView('recuperar')}
+ if(!c)return;
+ if(a==='tab'){ui.tr=b.dataset.v;ui.editP=-1;route()}
+ if(a==='delfile'){c.kb.files.splice(i,1);save();route()}
+ if(a==='delp'){c.kb.products.splice(i,1);ui.editP=-1;save();route();toast('Produto excluído')}
+ if(a==='editp'){ui.editP=i;route();$('#pN').focus()}
+ if(a==='canceledit'){ui.editP=-1;route()}
+ if(a==='delfaq'){c.kb.faq.splice(i,1);save();route()}
+ if(a==='sug')sendTest(b.dataset.v);
+ if(a==='resettest'){ui.test=[];ui.stage=null;ui.lastP=null;route()}
+ if(a==='dellogo'){c.profile.logo='';save();route()}
+ if(a==='cf'){ui.cf=b.dataset.v;route()}
+ if(a==='conv'){ui.conv=+b.dataset.id;route()}
+ if(a==='convback'){ui.conv=null;route()}
+ const cv=c.convs.find(x=>x.id===ui.conv);
+ if(cv&&a==='assumir'){cv.st='humano';save();route();toast('Você assumiu o atendimento')}
+ if(cv&&a==='devolver'){cv.st='ia';save();route();toast('A IA voltou a atender')}
+ if(cv&&a==='marcarvenda'){cv.st='venda';save();route();toast('Venda registrada')}
+});
+document.addEventListener('input',e=>{if(e.target.id==='cq'){ui.cq=e.target.value;const pos=e.target.selectionStart;route();const n=$('#cq');n.focus();n.setSelectionRange(pos,pos)}});
+window.addEventListener('hashchange',route);
+route();
+}
+</script>
+</body>
+</html>
